@@ -37,6 +37,13 @@ most once every 5 seconds::
     }, {throttleTime: 5000});
 
 
+See example
+-----------
+
+`Here <http://heyman.github.com/geolocation-throttle/example.html>`_ is a super simple and ugly example page.
+You should probably test it with a smartphone that has GPS.
+
+
 Copyright & License
 -------------------
 
