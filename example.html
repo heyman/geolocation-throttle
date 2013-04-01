@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>GeolocationThrottle Example</title>
+    </head>
+    <body>
+        <h1>GeolocationThrottle Example</h1>
+        
+        <p>
+            This example will print the lat/lng of the current location, at most once every 5 seconds.
+        </p>
+        
+        <div id="error"></div>
+        <ul id="positions"></ul>
+        
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script src="geolocation-throttle.js"></script>
+        <script>
+            var startTime = new Date();
+            
+            if(window.navigator && window.navigator.geolocation) {
+                GeolocationThrottle.watchPosition(function(position) {
+                    var timeEllapsed = (new Date() - startTime) / 1000.0;
+                    $('<li>' + timeEllapsed + ' seconds: ' + position.coords.latitude + ', ' + position.coords.longitude + '</li>').appendTo($("#positions"));
+                }, function() {
+                    $("#error").html("Could not get position. Have you allowed your browser and this website to check it?");
+                }, {
+                    throttleTime: 5000, // here we specify that we want a geolocation callback at most once every 5 seconds
+                })
+            }
+        </script>
+    </body>
+</html>
