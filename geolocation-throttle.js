@@ -9,7 +9,7 @@
          * that. The single purpose of this lib is to throttle the location callbacks.
          */
         watchPosition: function(callback, errorCallback, options) {
-            var throttleTime = (!options ? 1000 : options.throttleTime || 0);
+            var throttleTime = (!options ? 0 : options.throttleTime || 0);
             var bufferedArguments = null;
             var lastCall = null;
             var timeoutToken = null;
