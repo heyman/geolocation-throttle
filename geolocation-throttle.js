@@ -1,5 +1,8 @@
 (function(window) {
     window.GeolocationThrottle = {
+        // a mapping of watchId => timeoutId that can be used to clear position watching
+        _timeoutIds: {},
+        
         /**
          * Works just like navigator.geolocation.watchPosition, but adds one extra argument 
          * (throttleTime) to the options object, and makes sure that only one location callback 
@@ -12,9 +15,10 @@
             var throttleTime = (!options ? 0 : options.throttleTime || 0);
             var bufferedArguments = null;
             var lastCall = null;
-            var timeoutToken = null;
+            var timeoutId = null;
+            var watchId = null;
             
-            return navigator.geolocation.watchPosition(function() {
+            watchId = navigator.geolocation.watchPosition(function() {
                 // update bufferedArguments
                 bufferedArguments = arguments;
                 
@@ -22,7 +26,7 @@
                     //console.log("calling immediately initially");
                     lastCall = new Date();
                     callback.apply(this, arguments);
-                } else if (!timeoutToken) {
+                } else if (!timeoutId) {
                     // check if we've already passed the buffer time, in which case 
                     // we'll call the callback immediately
                     if (new Date()-lastCall > throttleTime) {
@@ -34,17 +38,41 @@
                         // a callback in the future
                         var that = this;
                         //console.log("call scheduled");
-                        timeoutToken = setTimeout(function() {
+                        timeoutId = setTimeout(function() {
                             //console.log("Call");
                             lastCall = new Date();
                             callback.apply(that, bufferedArguments);
-                            timeoutToken = null;
+                            
+                            timeoutId = null;
+                            window.GeolocationThrottle._timeoutIds[watchId] = null;
                         }, throttleTime - (new Date()-lastCall));
+                        
+                        // we store the timeout id so that we can clear the timeout if clearWatch 
+                        // is called before the setTimeout fires
+                        window.GeolocationThrottle._timeoutIds[watchId] = timeoutId;
                     }
                 } else {
+                    // we already have a scheduled call
                     //console.log("skipping call");
                 }
             }, errorCallback, options);
+            return watchId;
+        },
+        
+        /**
+         * Calls navigator.geolocation.clearWatch for the given watchId, but also 
+         * clears any timeout that has been set up by GeolocationThrottle to make 
+         * sure that no more callback for this watchId is called.
+         */
+        clearWatch: function(watchId) {
+            navigator.geolocation.clearWatch(watchId);
+            
+            // if there's a scheduled watch position callback we'll clear it
+            var timeoutId = window.GeolocationThrottle._timeoutIds[watchId];
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+                window.GeolocationThrottle._timeoutIds[watchId] = null;
+            }
         }
     };
 })(window);
