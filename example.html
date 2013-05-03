@@ -8,6 +8,9 @@
         
         <p>
             This example will print the lat/lng of the current location, at most once every 5 seconds.
+            <br><br>
+            <button id="start">Start (watchPosition)</button>
+            <button id="stop">Stop (clearWatch)</button>
         </p>
         
         <div id="error"></div>
@@ -16,17 +19,25 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
         <script src="geolocation-throttle.js"></script>
         <script>
-            var startTime = new Date();
-            
             if(window.navigator && window.navigator.geolocation) {
-                GeolocationThrottle.watchPosition(function(position) {
-                    var timeEllapsed = (new Date() - startTime) / 1000.0;
-                    $('<li>' + timeEllapsed + ' seconds: ' + position.coords.latitude + ', ' + position.coords.longitude + '</li>').appendTo($("#positions"));
-                }, function() {
-                    $("#error").html("Could not get position. Have you allowed your browser and this website to check it?");
-                }, {
-                    throttleTime: 5000, // here we specify that we want a geolocation callback at most once every 5 seconds
-                })
+                var watchId = null;
+                $("#start").click(function() {
+                    var startTime = new Date();
+                    watchId = GeolocationThrottle.watchPosition(function(position) {
+                        var timeEllapsed = (new Date() - startTime) / 1000.0;
+                        $('<li>' + timeEllapsed + ' seconds: ' + position.coords.latitude + ', ' + position.coords.longitude + '</li>').appendTo($("#positions"));
+                    }, function() {
+                        $("#error").html("Could not get position. Have you allowed your browser and this website to check it?");
+                    }, {
+                        throttleTime: 5000, // here we specify that we want a geolocation callback at most once every 5 seconds
+                    })
+                });
+                
+                $("#stop").click(function() {
+                    GeolocationThrottle.clearWatch(watchId);
+                });
+            } else {
+                $("#error").html("Your browser doesn't seem to support the geolocation API");
             }
         </script>
     </body>
