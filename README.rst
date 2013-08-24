@@ -18,7 +18,10 @@ system, in the watchPosition's callback, and I've wanted to limit the number of 
 performance and/or API limit reasons.
 
 One of the projects where it's used is `What is my zip <http://www.whatismyzip.com>`_ which is 
-a small website for retrieving the ZIP code of your current location.
+a small website for retrieving the ZIP code of your current location. That site also has a sister 
+site called `Canada postal code <http://canadapostalcode.net>`_ where GeolocationThrottle is 
+also used. The third project I use it for is `Longitude.me <http://longitude.me>`_, a service 
+for sharing your current location.
 
 
 How to use it?
