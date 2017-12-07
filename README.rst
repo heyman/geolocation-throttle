@@ -20,7 +20,7 @@ performance and/or API limit reasons.
 One of the projects where it's used is `What is my zip <https://www.whatismyzip.com>`_ which is 
 a small website for retrieving the ZIP code of your current location. Another for which I use 
 GeolocationThrottle is `Longitude.me <https://longitude.me>`_, a service for sharing your current 
-location. The third project where I use this lib is `Hotels Near Me <https://hotels-near.me>`, 
+location. The third project where I use this lib is `Hotels Near Me <https://hotels-near.me>`_, 
 which is a site for finding hotels near your current location.
 
 
